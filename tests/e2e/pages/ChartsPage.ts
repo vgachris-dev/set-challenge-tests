@@ -18,7 +18,7 @@ export class ChartsPage {
     this.sortByName = page.getByRole('button', { name: 'Name' });
     this.sortByDateCreated = page.getByRole('button', { name: 'Date created' });
     this.sortByLastModified = page.getByRole('button', { name: 'Last modified' });
-    this.chartRows = page.locator('.root .MuiGrid-container').filter({ has: page.locator('p.MuiTypography-root') });
+    this.chartRows = page.locator('.root .MuiGrid-container:not(.header)');
   }
 
   async goto() {
@@ -27,7 +27,7 @@ export class ChartsPage {
   }
 
   async getChartNames(): Promise<string[]> {
-    return this.chartRows.locator('p.MuiTypography-root').allTextContents();
+    return this.chartRows.allTextContents();
   }
 
   async sortBy(by: 'name' | 'dateCreated' | 'lastModified') {

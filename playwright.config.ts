@@ -21,8 +21,8 @@ export default defineConfig({
     // Desktop browsers
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    // },
+      use: { ...devices['Desktop Chrome'] }
+   },
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
