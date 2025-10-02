@@ -1,44 +1,51 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests',
   timeout: 30 * 1000,
   expect: {
     timeout: 5000,
   },
   fullyParallel: true,
-  retries: 1, // retry flaky tests once
+  retries: 1,
   reporter: [['html', { open: 'never' }], ['list']],
-  use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    video: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    headless: true,
-  },
 
   projects: [
-    // Desktop browsers
+    // ---------------------------
+    // UI Tests Project
+    // ---------------------------
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-   },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+      name: 'UI',
+      testDir: './tests/ui',
+      use: {
+        baseURL: 'http://localhost:3000', // React frontend
+        trace: 'on-first-retry',
+        video: 'on-first-retry',
+        screenshot: 'only-on-failure',
+        headless: true,
+        ...devices['Desktop Chrome'],
+      },
+    },
 
-    // Example mobile config (optional)
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
+    // ---------------------------
+    // API Tests Project
+    // ---------------------------
+    {
+      name: 'API',
+      testDir: './tests/api',
+      use: {
+        baseURL: 'http://localhost:3001', // Express backend
+      },
+    },
+
+    // ---------------------------
+    // Contract Tests Project
+    // ---------------------------
+    {
+      name: 'CONTRACT',
+      testDir: './tests/contract',
+      use: {
+        baseURL: 'http://localhost:3001', // Express backend schema validation
+      },
+    },
   ],
-
-  // Run local dev server if needed
-  // (We’ll skip here, since the app runs separately with Node 16)
 });
