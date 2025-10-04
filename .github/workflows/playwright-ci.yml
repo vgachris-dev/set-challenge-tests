@@ -1,0 +1,43 @@
+name: CI Pipeline - Test Automation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Build and start the application (mocked in this repo)
+      # In a real pipeline, this would run:
+      #   npm run build
+      #   npm start
+      # But since the app is excluded by design, mock this step:
+      - name: Mock Application Start
+        run: echo "Skipping app build/start as per instructions"
+
+      # Step 2: Run the Playwright tests
+      - name: Run Playwright Tests
+        run: npx playwright test --reporter=html
+
+      # Step 3: Publish test report
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
