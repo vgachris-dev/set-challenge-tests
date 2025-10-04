@@ -1,81 +1,53 @@
 import { test, expect } from '@playwright/test';
-import { API_ENDPOINTS, HTTP_STATUS, ERROR_MESSAGES } from '../helpers/testsConsts';
-import { EXPECTED_CHART_KEYS, EXPECTED_ERROR_KEYS } from './models';
-
+import {ResponseSchemas} from '../contract/responseSchemas';
+import { HelperFunctions } from '../helpers/HelperFunctions';
+import { TestConstants } from '../helpers/TestsConstants';
 test.describe('Charts API Contract', () => {
-  test('Response schema should match expected structure', async ({ request }) => {
-    // Arrange
-    const endpoint = API_ENDPOINTS.CHARTS;
 
-    // Act
-    const response = await request.get(endpoint);
-    const body = await response.json();
 
-    // Assert
-    expect(response.status()).toBe(HTTP_STATUS.OK);
-    expect(body).toHaveProperty('charts');
-    expect(Array.isArray(body.charts)).toBe(true);
+test('GetCharts_ShouldReturnValidResponse_WhenValidRequest', async ({ request }) => {
+  // Act
+  const response = await request.get(TestConstants.API_ENDPOINTS.CHARTS);
+  const body = await response.json();
+  // Assert
+  expect(response.status()).toBe(TestConstants.HTTP_STATUS.OK);
+  HelperFunctions.validateResponseSchema(body.charts, ResponseSchemas.EXPECTED_CHART_KEYS);
+});
 
-    for (const chart of body.charts) {
-      // Check expected keys exist
-      for (const key of EXPECTED_CHART_KEYS) {
-        expect(chart).toHaveProperty(key);
-      }
-      // Check types
-      expect(typeof chart.name).toBe('string');
-      expect(typeof chart.created_at).toBe('number');
-      expect(typeof chart.modified_at).toBe('number');
-    }
-  });
 
-  test('Should not return extra unexpected fields in success response', async ({ request }) => {
-    // Arrange
-    const endpoint = API_ENDPOINTS.CHARTS;
+test('GetCharts_ShouldReturnErrorResponse_WhenInvalidOrderBy', async ({ request }) => {
+  // Arrange
+  const endpoint = `${TestConstants.API_ENDPOINTS.CHARTS}?orderBy=invalidField`;
 
-    // Act
-    const response = await request.get(endpoint);
-    const { charts } = await response.json();
+  // Act
+  const response = await request.get(endpoint);
+  const body = await response.json();
 
-    // Assert
-    expect(response.status()).toBe(HTTP_STATUS.OK);
+  // Assert
+  HelperFunctions.validateErrorResponse(
+    body,
+    ResponseSchemas.EXPECTED_ERROR_KEYS,
+    TestConstants.ERROR_MESSAGES.BAD_REQUEST_PARAMETERS,
+    TestConstants.HTTP_STATUS.BAD_REQUEST,
+    response.status()
+  );
+});
 
-    for (const chart of charts) {
-      const keys = Object.keys(chart).sort();
-      expect(keys).toEqual(EXPECTED_CHART_KEYS.sort()); // exact match
-    }
-  });
+test('GetCharts_ShouldReturnErrorResponse_WhenOrderByDateCreatedDesc', async ({ request }) => {
+  // Arrange
+  const endpoint = `${TestConstants.API_ENDPOINTS.CHARTS}?orderBy=dateCreated&order=desc`;
 
-  test('Error response should follow contract on 400 Bad Request', async ({ request }) => {
-    // Arrange
-    const endpoint = `${API_ENDPOINTS.CHARTS}?orderBy=invalidField`;
+  // Act
+  const response = await request.get(endpoint);
+  const body = await response.json();
 
-    // Act
-    const response = await request.get(endpoint);
-    const body = await response.json();
-
-    // Assert
-    expect(response.status()).toBe(HTTP_STATUS.BAD_REQUEST);
-    for (const key of EXPECTED_ERROR_KEYS) {
-      expect(body).toHaveProperty(key);
-    }
-    expect(typeof body.error).toBe('string');
-    expect(body.error).toBe(ERROR_MESSAGES.BAD_REQUEST_PARAMETERS);
-  });
-
-  test('Error response should follow contract on 500 Server Error', async ({ request }) => {
-    // Arrange
-    const endpoint = `${API_ENDPOINTS.CHARTS}?orderBy=dateCreated&order=desc`;
-
-    // Act
-    const response = await request.get(endpoint);
-    const body = await response.json();
-
-    // Assert
-    expect(response.status()).toBe(HTTP_STATUS.SERVER_ERROR);
-    for (const key of EXPECTED_ERROR_KEYS) {
-      expect(body).toHaveProperty(key);
-    }
-    expect(typeof body.error).toBe('string');
-    expect(body.error).toBe(ERROR_MESSAGES.DATE_CREATED_DESC_NOT_IMPLEMENTED);
-  });
+  // Assert
+  HelperFunctions.validateErrorResponse(
+    body,
+    ResponseSchemas.EXPECTED_ERROR_KEYS,
+    TestConstants.ERROR_MESSAGES.DATE_CREATED_DESC_NOT_IMPLEMENTED,
+    TestConstants.HTTP_STATUS.SERVER_ERROR,
+    response.status()
+  );
+});
 });
