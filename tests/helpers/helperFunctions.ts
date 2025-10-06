@@ -1,5 +1,6 @@
 import { expect, Locator } from '@playwright/test';
 
+
 export class HelperFunctions {
   static async getFontWeight(locator: Locator): Promise<number> {
     return parseInt(
