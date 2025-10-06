@@ -1,8 +1,24 @@
-
-# Playwright
+# Node dependencies
 node_modules/
+npm-debug.log*
+package-lock.json*
+
+# Playwright test outputs
 /test-results/
 /playwright-report/
-/blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Test coverage
+coverage/
+*.lcov
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# GitHub Actions cache / logs
+.github/workflows/*.log
