@@ -3,6 +3,8 @@ name: CI Pipeline - Test Automation
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   test:
@@ -20,20 +22,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Build and start the application (mocked in this repo)
-      # In a real pipeline, this would run:
-      #   npm run build
-      #   npm start
-      # But since the app is excluded by design, mock this step:
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      # Mock the app start (since backend/frontend excluded)
       - name: Mock Application Start
         run: echo "Skipping app build/start as per instructions"
 
-      # Step 2: Run the Playwright tests
+      # Explicitly point Playwright to the test directory
       - name: Run Playwright Tests
-        run: npx playwright install --with-deps
-             npx playwright test --config=playwright.config.ts --reporter=html
+        run: npx playwright test tests --config=playwright.config.ts --reporter=html
 
-      # Step 3: Publish test report
+      # Always publish the test report
       - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4
