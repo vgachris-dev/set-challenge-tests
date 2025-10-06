@@ -30,7 +30,8 @@ jobs:
 
       # Step 2: Run the Playwright tests
       - name: Run Playwright Tests
-        run: npx playwright test --reporter=html
+        run: npx playwright install --with-deps
+             npx playwright test --config=playwright.config.ts --reporter=html
 
       # Step 3: Publish test report
       - name: Upload HTML Report
