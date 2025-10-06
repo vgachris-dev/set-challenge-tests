@@ -26,19 +26,31 @@ test.describe('Charts Page (UI E2E)', () => {
 
 test('Verify column headers switch from medium to bold when clicked', async () => {
   // Arrange
-  const beforeWeights = await Promise.all(chartsPage.columnHeaderButtons.map(h => HelperFunctions.getFontWeight(h)));
+  const beforeWeights = await Promise.all(
+    chartsPage.columnHeaderButtons.map(h => HelperFunctions.getFontWeight(h))
+  );
+
   // Act
   const afterWeights: number[] = [];
   for (const header of chartsPage.columnHeaderButtons) {
     await header.click();
     afterWeights.push(await HelperFunctions.getFontWeight(header));
   }
+
   // Assert
-  for (const weight of beforeWeights) {
-    expect(weight).toBe(TestConstants.FONT_WEIGHT.MEDIUM);
-  }
-  for (const weight of afterWeights) {
-    expect(weight).toBe(TestConstants.FONT_WEIGHT.BOLD);
+  for (let i = 0; i < chartsPage.columnHeaderButtons.length; i++) {
+    const header = chartsPage.columnHeaderButtons[i];
+    const before = beforeWeights[i];
+    const after = afterWeights[i];
+
+    // If it's the name column, it's already bold (default)
+    if (header === chartsPage.nameColumnHeaderButton) {
+      expect(before).toBe(TestConstants.FONT_WEIGHT.BOLD);
+      expect(after).toBe(TestConstants.FONT_WEIGHT.BOLD);
+    } else {
+      expect(before).toBe(TestConstants.FONT_WEIGHT.MEDIUM);
+      expect(after).toBe(TestConstants.FONT_WEIGHT.BOLD);
+    }
   }
 });
 
@@ -57,7 +69,7 @@ test('Verify column headers switch from medium to bold when clicked', async () =
     // Act
     await chartsPage.dateCreatedColumnHeaderButton.click();
     const rows = await chartsPage.chartRows.allTextContents();
-    const dates = parseDatesFromRows(rows, TestConstants.INDEX.SECOND);
+    const dates = HelperFunctions.parseDatesFromRows(rows, TestConstants.INDEX.SECOND);
     const sorted = [...dates].sort((a, b) => a - b);
     // Assert
     expect(dates).toEqual(sorted);
@@ -67,7 +79,7 @@ test('Verify column headers switch from medium to bold when clicked', async () =
     // Act
     await chartsPage.lastModifiedColumnHeaderButton.click();
     const rows = await chartsPage.chartRows.allTextContents();
-    const dates = parseDatesFromRows(rows, TestConstants.INDEX.THIRD);
+    const dates = HelperFunctions.parseDatesFromRows(rows, TestConstants.INDEX.THIRD);
     const sorted = [...dates].sort((a, b) => a - b);
     // Assert
     expect(dates).toEqual(sorted);
@@ -84,16 +96,9 @@ test('Verify column headers switch from medium to bold when clicked', async () =
     await chartsPage.searchChartsInput.waitFor({ state: 'visible' });
     const firstChart = (await chartsPage.getChartNames())[TestConstants.INDEX.FIRST];
     await chartsPage.searchChartsInput.fill(firstChart);
-    // Assert
     const visibleNames = await chartsPage.getChartNames();
+    // Assert
     expect(visibleNames).toContain(firstChart);
   });
-
-
-
-  const parseDatesFromRows = (rows: string[], columnIndex: number): number[] =>
-    rows
-      .map(r => r.split('\n')[columnIndex])
-      .map(d => new Date(d).getTime());
 
 });

@@ -1,12 +1,12 @@
 
 export class TestConstants {
-  // 🌐 API Endpoints
+
   static readonly API_ENDPOINTS = {
     CHARTS: '/api/charts',
     CHARTS_INVALID: '/api/chartss',
   };
 
-  // ⚙️ HTTP Status Codes
+
   static readonly HTTP_STATUS = {
     OK: 200,
     BAD_REQUEST: 400,
@@ -14,20 +14,20 @@ export class TestConstants {
     SERVER_ERROR: 500,
   };
 
-  // 🧩 Common Error Messages
+
   static readonly ERROR_MESSAGES = {
     BAD_REQUEST_PARAMETERS: 'Please check your request parameters',
     DATE_CREATED_DESC_NOT_IMPLEMENTED: 'Currently no order by dateCreated descending has been implemented',
-    NOT_FOUND: 'Resource not found',
+    NOT_FOUND: 'Cannot GET ' + TestConstants.API_ENDPOINTS.CHARTS_INVALID,
   };
 
-  // 🔤 Font Weights (for UI tests)
+
   static readonly FONT_WEIGHT = {
     MEDIUM: 500,
     BOLD: 700,
   };
 
-  // 🔢 Index Constants (for quick array access)
+
   static readonly INDEX = {
     FIRST: 0,
     SECOND: 1,

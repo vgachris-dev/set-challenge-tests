@@ -50,4 +50,23 @@ test('GetCharts_ShouldReturnErrorResponse_WhenOrderByDateCreatedDesc', async ({ 
     response.status()
   );
 });
+
+test('GetCharts_ShouldReturnErrorResponse_WhenInvalidEndpoint', async ({ request }) => {
+  // Arrange
+  const endpoint = TestConstants.API_ENDPOINTS.CHARTS_INVALID;
+
+  // Act
+  const response = await request.get(endpoint);
+  const body = await response.text();
+
+  // Assert
+  HelperFunctions.validateErrorResponse(
+    body,
+    ResponseSchemas.EXPECTED_ERROR_KEYS,
+    TestConstants.ERROR_MESSAGES.NOT_FOUND,
+    TestConstants.HTTP_STATUS.NOT_FOUND,
+    response.status()
+  );
+});
+
 });
