@@ -1,14 +1,11 @@
 export class ResponseSchemas {
   static readonly EXPECTED_CHART_KEYS: string[] = [
-    'name',
-    'created_at',
-    'modified_at',
+    "name",
+    "created_at",
+    "modified_at",
   ];
 
-
-
-
-  static readonly EXPECTED_ERROR_KEYS: string[] = ['error'];
+  static readonly EXPECTED_ERROR_KEYS: string[] = ["error"];
 }
 
 export interface ChartModel {

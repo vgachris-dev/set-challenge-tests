@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   timeout: 30 * 1000,
@@ -7,22 +7,22 @@ export default defineConfig({
   },
   fullyParallel: true,
   retries: 1,
-  reporter: [['html', { open: 'never' }], ['list']],
+  reporter: [["html", { open: "never" }], ["list"]],
 
   projects: [
     // ---------------------------
     // UI Tests Project
     // ---------------------------
     {
-      name: 'UI',
-      testDir: './tests/ui',
+      name: "UI",
+      testDir: "./tests/ui",
       use: {
-        baseURL: 'http://localhost:3000', // React frontend
-        trace: 'on-first-retry',
-        video: 'on-first-retry',
-        screenshot: 'only-on-failure',
+        baseURL: "http://localhost:3000", // React frontend
+        trace: "on-first-retry",
+        video: "on-first-retry",
+        screenshot: "only-on-failure",
         headless: true,
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
       },
     },
 
@@ -30,10 +30,10 @@ export default defineConfig({
     // API Tests Project
     // ---------------------------
     {
-      name: 'API',
-      testDir: './tests/api',
+      name: "API",
+      testDir: "./tests/api",
       use: {
-        baseURL: 'http://localhost:3001', // Express backend
+        baseURL: "http://localhost:3001", // Express backend
       },
     },
 
@@ -41,10 +41,10 @@ export default defineConfig({
     // Contract Tests Project
     // ---------------------------
     {
-      name: 'CONTRACT',
-      testDir: './tests/contract',
+      name: "CONTRACT",
+      testDir: "./tests/contract",
       use: {
-        baseURL: 'http://localhost:3001', // Express backend schema validation
+        baseURL: "http://localhost:3001", // Express backend schema validation
       },
     },
   ],

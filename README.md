@@ -29,39 +29,46 @@ set-challenge-tests/
 ## Test Coverage
 
 ### UI Tests
+
 Located in: `tests/ui/chartsPage-tests.spec.ts`
 
 These tests cover:
-- Charts page load and visibility of key elements  
-- Column header interaction and dynamic style changes  
-- Default and manual sorting verification  
-- Search functionality and create-chart button visibility  
+
+- Charts page load and visibility of key elements
+- Column header interaction and dynamic style changes
+- Default and manual sorting verification
+- Search functionality and create-chart button visibility
 
 NOTE: UI tests require original data to exist. Otherwise, mocking approach must be implemented.
+
 ### API Tests
+
 Located in: `tests/api/charts-api-tests.spec.ts`
 
 These tests validate:
-- Sorting and filtering behavior via query parameters  
-- Error handling for invalid parameters and endpoints  
-- Dataset immutability across identical calls  
+
+- Sorting and filtering behavior via query parameters
+- Error handling for invalid parameters and endpoints
+- Dataset immutability across identical calls
 
 ### Contract Tests
+
 Located in: `tests/contract/charts-contract-tests.spec.ts`
 
 These tests ensure:
-- Response schema matches defined models (`ChartModel`, `ErrorModel`)  
-- Proper response types and structures for valid and invalid requests  
+
+- Response schema matches defined models (`ChartModel`, `ErrorModel`)
+- Proper response types and structures for valid and invalid requests
 - Error consistency (status codes, messages, and data format)
 
 ---
 
 ## Tech Stack
 
-- **Language:** TypeScript  
-- **Framework:** Playwright Test Runner  
-- **Assertion Library:** Built-in Playwright expect  
-- **CI/CD:** GitHub Actions (Node 20)  
+- **Language:** TypeScript
+- **Framework:** Playwright Test Runner
+- **Assertion Library:** Built-in Playwright expect
+- **CI/CD:** GitHub Actions (Node 20)
 - **Design Pattern:** Page Object Model (for UI tests)
 
 ---
@@ -71,11 +78,11 @@ These tests ensure:
 The CI pipeline runs automatically on **push** or **pull request** to the `master` branch.  
 It performs the following steps:
 
-1. **Checkout Repository** – Clones the project.  
-2. **Setup Node.js (v20)** – Installs runtime environment.  
-3. **Install Dependencies** – Runs `npm ci` for clean installs.  
-4. **Mock Application Start** – Skips frontend/backend startup per challenge instructions.  
-5. **Run Playwright Tests** – Executes all UI, API, and Contract test suites.  
+1. **Checkout Repository** – Clones the project.
+2. **Setup Node.js (v20)** – Installs runtime environment.
+3. **Install Dependencies** – Runs `npm ci` for clean installs.
+4. **Mock Application Start** – Skips frontend/backend startup per challenge instructions.
+5. **Run Playwright Tests** – Executes all UI, API, and Contract test suites.
 6. **Publish Test Report** – Uploads the Playwright HTML report as a pipeline artifact.
 
 > **Note:**  
@@ -88,15 +95,18 @@ It performs the following steps:
 During execution, several functional and integration issues were identified.
 
 ### 1. Invalid `order` parameter not validated properly
+
 **Created by test:** `GetCharts_ShouldThrowError_WhenInvalidOrder`  
 **File:** `tests/api/charts-api-tests.spec.ts`
 
 **Steps to Reproduce:**
+
 1. Send `GET /api/charts?orderBy=name&order=sideways`
 2. Observe the response.
 
 **Expected Behavior:**  
 Should return `400 Bad Request` with:
+
 ```json
 { "error": "Invalid order or orderBy parameters" }
 ```
@@ -107,10 +117,12 @@ Returns `200 OK` with normal chart list.
 ---
 
 ### 2. Dataset mutation across consecutive requests
+
 **Created by test:** `GetCharts_ShouldReturnSameResults_WhenDatasetMutated`  
 **File:** `tests/api/charts-api-tests.spec.ts`
 
 **Steps to Reproduce:**
+
 1. Call `/api/charts?orderBy=dateCreated&order=asc`
 2. Then `/api/charts?orderBy=name&order=asc`
 3. Call `/api/charts?orderBy=dateCreated&order=asc` again
@@ -120,29 +132,34 @@ Identical requests return identical results.
 
 **Actual Behavior:**  
 Results differ, indicating in-memory dataset mutation.  
-*(Reproducible only when the UI is not active, as UI calls influence dataset state.)*
+_(Reproducible only when the UI is not active, as UI calls influence dataset state.)_
 
 ---
 
 ### 3. Invalid endpoint returns HTML instead of JSON
+
 **Created by test:** `GetCharts_ShouldReturnErrorResponse_WhenInvalidEndpoint`  
 **File:** `tests/contract/charts-contract-tests.spec.ts`
 
 **Steps to Reproduce:**
+
 1. Send `GET /api/chartss`
 2. Observe the raw response.
 
 **Expected Behavior:**  
 `404 Not Found` with JSON:
+
 ```json
 { "error": "Endpoint not found" }
 ```
 
 **Actual Behavior:**  
 Returns HTML:
+
 ```html
 <pre>Cannot GET /api/chartss</pre>
 ```
+
 and `Content-Type: text/html`, violating the JSON response contract.
 
 ---
@@ -156,7 +173,7 @@ To run the tests locally:
 npm ci
 
 # Start application backend on http://localhost:3001, frontend on http://localhost:3000
-npm run server 
+npm run server
 npm run react
 
 # Run all Playwright tests
@@ -180,7 +197,6 @@ After each CI run, navigate to:
 ---
 
 ## Future Improvements
-
 
 **Mocking and Component-Level UI Testing**:
 Introduce API and UI mocking (e.g., via Playwright route interception or MSW) to enable component-level testing and faster, isolated validation of front-end behavior.

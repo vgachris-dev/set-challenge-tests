@@ -1,13 +1,17 @@
-import { expect, Locator } from '@playwright/test';
-
-
+import { expect, Locator } from "@playwright/test";
 
 export class HelperFunctions {
   static async getFontWeight(locator: Locator): Promise<number> {
     return parseInt(
-      await locator.evaluate(el => getComputedStyle(el).fontWeight),
-      10
+      await locator.evaluate((el) => getComputedStyle(el).fontWeight),
+      10,
     );
+  }
+
+  static parseDatesFromRows(rows: string[], columnIndex: number): number[] {
+    return rows
+      .map((r) => r.split("\n")[columnIndex])
+      .map((d) => new Date(d).getTime());
   }
 
   static validateResponseSchema(items: any[], expectedKeys: string[]) {
@@ -29,17 +33,17 @@ export class HelperFunctions {
     expectedKeys: string[],
     expectedMessage: string,
     expectedStatus: number,
-    actualStatus: number
+    actualStatus: number,
   ) {
     expect(actualStatus).toBe(expectedStatus);
-    expect(typeof responseBody).toBe('object');
+    expect(typeof responseBody).toBe("object");
     expect(responseBody).not.toBeNull();
-    
+
     for (const key of expectedKeys) {
       expect(responseBody).toHaveProperty(key);
     }
 
-    expect(typeof responseBody.error).toBe('string');
+    expect(typeof responseBody.error).toBe("string");
     expect(responseBody.error).toBe(expectedMessage);
   }
 }
