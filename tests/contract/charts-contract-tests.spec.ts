@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {ResponseSchemas} from './responseSchemas';
+import {ResponseSchemas} from './ResponseSchemas';
 import { HelperFunctions } from '../helpers/HelperFunctions';
 import { TestConstants } from '../helpers/TestsConstants';
 test.describe('Charts API Contract', () => {
